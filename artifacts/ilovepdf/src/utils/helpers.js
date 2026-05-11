@@ -63,7 +63,7 @@ export function setupDropZone(zoneId, inputId, onFiles) {
 }
 
 export function trustBar() {
-  return `<div class="trust-bar"><span>🔒 Files never leave your device</span><span>⚡ Instant browser processing</span><span>🗑️ Auto-cleanup</span></div>`;
+  return `<div class="trust-bar"><span>🔒 Files never leave your device</span><span>⚡ Instant browser processing</span><span>🗑️ Auto-cleanup</span><span>✅ No account required</span></div>`;
 }
 
 export function toolHeader(icon, title, desc) {

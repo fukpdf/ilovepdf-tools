@@ -43,10 +43,10 @@ class App {
       setTimeout(() => {
         const banner = document.getElementById('cookie-banner');
         if (banner) banner.style.display = 'flex';
-      }, 1500);
+      }, 2000);
     }
     window.acceptCookies = (type) => {
-      localStorage.setItem('cookie-consent', type);
+      localStorage.setItem('cookie-consent', JSON.stringify({ essential: true, analytics: type === 'all', preferences: type === 'all', timestamp: Date.now() }));
       const banner = document.getElementById('cookie-banner');
       if (banner) banner.style.display = 'none';
     };
@@ -57,13 +57,20 @@ class App {
     if (!accepted) {
       setTimeout(() => {
         const overlay = document.getElementById('terms-overlay');
-        if (overlay) overlay.style.display = 'flex';
+        if (overlay) {
+          overlay.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+        }
       }, 800);
     }
     window.acceptTerms = () => {
       sessionStorage.setItem('terms-accepted', '1');
       const overlay = document.getElementById('terms-overlay');
       if (overlay) overlay.style.display = 'none';
+      document.body.style.overflow = '';
+    };
+    window.leaveWebsite = () => {
+      window.location.href = 'https://www.google.com';
     };
   }
 

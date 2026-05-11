@@ -63,6 +63,13 @@
     @media(max-width:480px){
       .trust-bar{flex-direction:column;align-items:flex-start;gap:.375rem}
       input[type=number],input[type=text],input[type=email],textarea,select{font-size:.9rem;padding:.5rem .75rem}
+      .terms-modal{padding:1.5rem}
+    }
+    @media(max-width:640px){
+      .footer-grid{grid-template-columns:1fr 1fr !important}
+    }
+    @media(max-width:400px){
+      .footer-grid{grid-template-columns:1fr !important}
     }
     .cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#1A1530;color:white;padding:1rem 1.5rem;z-index:9998;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;transform:translateY(0);transition:transform .3s}
     .terms-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9997;display:flex;align-items:center;justify-content:center;padding:1rem}
@@ -87,12 +94,21 @@
   </div>
   <div id="terms-overlay" class="terms-overlay" style="display:none;">
     <div class="terms-modal">
-      <h2 style="font-size:1.5rem;font-weight:700;color:#1A1530;margin-bottom:1rem;">Welcome to ILovePDF</h2>
-      <p style="color:#6B7280;margin-bottom:1rem;line-height:1.6;">By using this service you agree to our <a href="#terms" style="color:#7B3FF2;">Terms of Service</a>. All file processing happens entirely in your browser — your files never leave your device.</p>
-      <div style="background:#F3EEFF;border-radius:10px;padding:1rem;margin-bottom:1.5rem;">
-        <p style="font-size:.875rem;color:#5B21B6;font-weight:600;">🔒 100% Private: Your files stay on your device</p>
+      <h2 style="font-size:1.4rem;font-weight:800;color:#1A1530;margin-bottom:.75rem;">Welcome to ILovePDF</h2>
+      <p style="color:#6B7280;font-size:.9rem;margin-bottom:1rem;line-height:1.6;">By continuing, you agree to our <a href="#terms" onclick="window.acceptTerms()" style="color:#7B3FF2;">Terms of Service</a>, <a href="#privacy" onclick="window.acceptTerms()" style="color:#7B3FF2;">Privacy Policy</a>, and <a href="#cookies" onclick="window.acceptTerms()" style="color:#7B3FF2;">Cookie Policy</a>.</p>
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:1rem;margin-bottom:1rem;">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:.4rem;">
+          <li style="font-size:.85rem;color:#166534;display:flex;gap:.5rem;"><span>🔒</span><span>Files are processed locally in your browser</span></li>
+          <li style="font-size:.85rem;color:#166534;display:flex;gap:.5rem;"><span>⚠️</span><span>We do NOT guarantee compatibility for all files or devices</span></li>
+          <li style="font-size:.85rem;color:#166534;display:flex;gap:.5rem;"><span>📋</span><span>Users are responsible for the content they process</span></li>
+          <li style="font-size:.85rem;color:#166534;display:flex;gap:.5rem;"><span>🚫</span><span>Abuse or illegal usage is prohibited</span></li>
+        </ul>
       </div>
-      <button onclick="window.acceptTerms()" class="btn-primary" style="width:100%;justify-content:center;">I Accept — Continue</button>
+      <div style="background:#FEF3C7;border-radius:8px;padding:.75rem;margin-bottom:1.25rem;">
+        <p style="font-size:.8rem;color:#92400E;">Independent platform. <strong>NOT affiliated with iLovePDF S.L.</strong> All trademarks belong to their respective owners.</p>
+      </div>
+      <button onclick="window.acceptTerms()" class="btn-primary" style="width:100%;justify-content:center;margin-bottom:.75rem;">I Understand & Accept</button>
+      <button onclick="window.leaveWebsite()" style="width:100%;background:none;border:1px solid #E5E7EB;border-radius:10px;height:44px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;color:#6B7280;">Leave Website</button>
     </div>
   </div>
   <script type="module" src="/src/core/App.js"></script>

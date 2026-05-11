@@ -2,8 +2,12 @@ export class ContactPage {
   render() {
     return `
     <div style="max-width:640px;margin:0 auto;padding:2rem 0;">
-      <h1 style="font-size:2.25rem;font-weight:800;color:#1A1530;margin-bottom:1rem;">Contact Us</h1>
-      <p style="color:#6B7280;font-size:1rem;line-height:1.6;margin-bottom:2rem;">Have a question, found a bug, or want to suggest a new tool? We'd love to hear from you.</p>
+      <h1 style="font-size:2.25rem;font-weight:800;color:#1A1530;margin-bottom:.5rem;">Contact Us</h1>
+      <p style="color:#6B7280;font-size:1rem;line-height:1.6;margin-bottom:.75rem;">Have a question, found a bug, or want to suggest a new tool?</p>
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <span style="color:#166534;font-size:.9rem;">📧 Email: <a href="mailto:support@ilovepdf.cyou" style="color:#7B3FF2;font-weight:600;">support@ilovepdf.cyou</a></span>
+        <span style="color:#6B7280;font-size:.875rem;">⏱️ Usually within 24 hours</span>
+      </div>
 
       <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:2rem;margin-bottom:2rem;">
         <form id="contact-form" onsubmit="window._contactSubmit(event)">
@@ -18,7 +22,7 @@ export class ContactPage {
             </div>
             <div>
               <label style="font-weight:600;font-size:.9rem;color:#1A1530;display:block;margin-bottom:.5rem;">Subject</label>
-              <select id="cf-subject" style="width:100%;">
+              <select id="cf-subject">
                 <option>Bug Report</option>
                 <option>Feature Request</option>
                 <option>General Question</option>
@@ -36,7 +40,7 @@ export class ContactPage {
         <div id="cf-success" style="display:none;text-align:center;padding:2rem;">
           <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
           <h3 style="font-weight:700;color:#166534;margin-bottom:.5rem;">Message Sent!</h3>
-          <p style="color:#6B7280;">Thank you for reaching out. We'll get back to you as soon as possible.</p>
+          <p style="color:#6B7280;">Thank you for reaching out. We typically reply within 24 hours at <strong>support@ilovepdf.cyou</strong>.</p>
         </div>
       </div>
 

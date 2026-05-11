@@ -50,6 +50,14 @@ const PAGE_ROUTES = {
   'donate': () => import('../pages/DonatePage.js'),
 };
 
+function trackRecentTool(slug) {
+  try {
+    const recent = JSON.parse(localStorage.getItem('recentTools') || '[]');
+    const updated = [slug, ...recent.filter(t => t !== slug)].slice(0, 6);
+    localStorage.setItem('recentTools', JSON.stringify(updated));
+  } catch (e) { /* ignore */ }
+}
+
 export class Router {
   init() {
     window.addEventListener('hashchange', () => this.navigate());
@@ -73,6 +81,7 @@ export class Router {
       }
 
       if (TOOL_ROUTES[hash]) {
+        trackRecentTool(hash);
         const mod = await TOOL_ROUTES[hash]();
         const ToolClass = Object.values(mod)[0];
         const tool = new ToolClass();
@@ -90,7 +99,6 @@ export class Router {
         return;
       }
 
-      // Unknown hash — show home
       SEO.setPageMeta('');
       const home = new HomePage();
       main.innerHTML = home.render();

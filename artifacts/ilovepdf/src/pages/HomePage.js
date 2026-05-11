@@ -39,9 +39,26 @@ export class HomePage {
       {slug:'workflow-builder',icon:'⚙️',name:'Workflow Builder',desc:'Chain multiple tools',color:'#374151'},
     ];
 
+    let recentSection = '';
+    try {
+      const recentSlugs = JSON.parse(localStorage.getItem('recentTools') || '[]');
+      const recentTools = recentSlugs.map(slug => tools.find(t => t.slug === slug)).filter(Boolean);
+      if (recentTools.length) {
+        recentSection = `
+        <div class="container" style="padding-top:2rem;padding-bottom:0;">
+          <h2 style="font-size:1.1rem;font-weight:700;color:#1A1530;margin-bottom:1rem;">🕐 Recently Used</h2>
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:.5rem;">
+            ${recentTools.map(t => `
+              <a href="#${t.slug}" style="display:inline-flex;align-items:center;gap:.5rem;background:white;border:1px solid #E5E7EB;border-radius:10px;padding:.5rem 1rem;text-decoration:none;color:#1A1530;font-size:.875rem;font-weight:600;transition:all .2s;white-space:nowrap;" onmouseover="this.style.borderColor='#7B3FF2';this.style.color='#7B3FF2'" onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#1A1530'">
+                <span>${t.icon}</span>${t.name}
+              </a>`).join('')}
+          </div>
+        </div>`;
+      }
+    } catch (e) { /* localStorage might be unavailable */ }
+
     return `
     <div>
-      <!-- Hero -->
       <div style="text-align:center;padding:4rem 1rem 3rem;background:linear-gradient(180deg,#F3EEFF 0%,#fff 100%);">
         <div style="display:inline-flex;align-items:center;gap:.5rem;background:#EDE9FE;color:#7B3FF2;border-radius:20px;padding:.4rem 1rem;font-size:.85rem;font-weight:600;margin-bottom:1.5rem;">🔒 100% Browser-based • Zero uploads</div>
         <h1 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:800;color:#1A1530;margin-bottom:1rem;line-height:1.15;">
@@ -56,10 +73,11 @@ export class HomePage {
         </div>
       </div>
 
-      <!-- Tools Grid -->
+      ${recentSection}
+
       <div class="container" style="padding-top:2rem;">
         <h2 style="font-size:1.5rem;font-weight:700;color:#1A1530;margin-bottom:1.5rem;">All Tools <span style="font-size:1rem;font-weight:500;color:#6B7280;">(${tools.length})</span></h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">
           ${tools.map(t => `
             <a href="#${t.slug}" class="tool-card" style="display:flex;flex-direction:column;gap:.75rem;">
               <div style="width:48px;height:48px;border-radius:12px;background:${t.color}15;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${t.icon}</div>
@@ -71,7 +89,6 @@ export class HomePage {
           `).join('')}
         </div>
 
-        <!-- Stats -->
         <div style="margin-top:4rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1.5rem;text-align:center;padding:2.5rem;background:#F9FAFB;border-radius:20px;">
           <div><div style="font-size:2rem;font-weight:800;color:#7B3FF2;">${tools.length}+</div><div style="color:#6B7280;font-size:.9rem;">PDF Tools</div></div>
           <div><div style="font-size:2rem;font-weight:800;color:#7B3FF2;">100%</div><div style="color:#6B7280;font-size:.9rem;">Free Forever</div></div>

@@ -9,6 +9,11 @@ export class AboutPage {
         Your files never leave your device.
       </p>
 
+      <div style="background:#EDE9FE;border:1px solid #C4B5FD;border-radius:12px;padding:1.5rem;margin-bottom:2rem;">
+        <h2 style="font-size:1rem;font-weight:700;color:#5B21B6;margin-bottom:.5rem;">👨‍💻 Built by Muhammad Safdar</h2>
+        <p style="color:#5B21B6;font-size:.95rem;line-height:1.6;">ILovePDF is an independent project created by Muhammad Safdar. It is an <strong>independent, free, browser-based platform</strong> and is <strong>NOT affiliated with, associated with, endorsed by, or connected to iLovePDF S.L. or ilovepdf.com</strong> in any way. All trademarks belong to their respective owners.</p>
+      </div>
+
       <div style="background:#F3EEFF;border-radius:16px;padding:2rem;margin-bottom:2rem;">
         <h2 style="font-size:1.25rem;font-weight:700;color:#1A1530;margin-bottom:1rem;">Our Philosophy</h2>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:1rem;">
@@ -16,7 +21,8 @@ export class AboutPage {
             ['🔒','Privacy First','We process files entirely in your browser using JavaScript. No server uploads, no data retention, no tracking of your documents.'],
             ['🆓','Free Forever','All tools are free to use without limits. We believe essential productivity tools should be accessible to everyone.'],
             ['⚡','Fast & Local','Browser-based processing means instant results without upload delays. Your internet speed doesn\'t affect processing.'],
-            ['🌐','Works Everywhere','No installation required. ILovePDF works on any modern browser on any device.']
+            ['🌐','Works Everywhere','No installation required. ILovePDF works on any modern browser on any device.'],
+            ['✅','No Account Needed','Use all 36 tools without signing up or logging in. No email, no password, no account ever required.'],
           ].map(([icon,title,desc])=>`
             <li style="display:flex;gap:1rem;align-items:flex-start;">
               <span style="font-size:1.5rem;flex-shrink:0;">${icon}</span>
@@ -28,13 +34,13 @@ export class AboutPage {
       <div style="margin-bottom:2rem;">
         <h2 style="font-size:1.25rem;font-weight:700;color:#1A1530;margin-bottom:1rem;">How We Compare</h2>
         <div style="overflow-x:auto;">
-          <table style="width:100%;border-collapse:collapse;font-size:.9rem;">
+          <table style="width:100%;border-collapse:collapse;font-size:.9rem;min-width:480px;">
             <thead>
               <tr style="background:#7B3FF2;color:white;">
-                <th style="padding:.75rem 1rem;text-align:left;border-radius:8px 0 0 0;">Feature</th>
+                <th style="padding:.75rem 1rem;text-align:left;">Feature</th>
                 <th style="padding:.75rem 1rem;text-align:center;">ILovePDF</th>
                 <th style="padding:.75rem 1rem;text-align:center;">Other Online Tools</th>
-                <th style="padding:.75rem 1rem;text-align:center;border-radius:0 8px 0 0;">Desktop Software</th>
+                <th style="padding:.75rem 1rem;text-align:center;">Desktop Software</th>
               </tr>
             </thead>
             <tbody>
@@ -42,7 +48,6 @@ export class AboutPage {
                 ['No file uploads required','✅','❌','✅'],
                 ['Free to use','✅','Partial','Rarely'],
                 ['No account needed','✅','Often required','Sometimes'],
-                ['Works offline (PWA)','✅','❌','✅'],
                 ['Instant processing','✅','Slow uploads','✅'],
                 ['No file size limits','✅','Often limited','✅'],
                 ['Mobile friendly','✅','Partial','❌'],
