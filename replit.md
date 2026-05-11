@@ -1,45 +1,77 @@
-# [Project name]
+# ILovePDF
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A free, browser-based PDF tools website with 36+ tools, all processing 100% in the browser — no file uploads, no servers, complete privacy.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm --filter @workspace/ilovepdf run dev` — run the frontend dev server (port from $PORT env)
+- Restart workflow: `artifacts/ilovepdf: web`
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- **Frontend**: Vanilla JS ES Modules + Tailwind CSS CDN (NO React/framework)
+- **Dev server**: Vite (serves static JS modules — no build plugins used)
+- **PDF processing**: pdf-lib@1.17.1 (CDN, loaded dynamically)
+- **PDF rendering**: pdfjs-dist@3.11.174 (CDN, loaded dynamically)
+- **OCR**: Tesseract.js@5 (CDN, loaded dynamically)
+- **Word docs**: mammoth@1.6.0 (CDN, loaded dynamically)
+- **HTML→PDF**: html2pdf.js@0.10.1 (CDN, loaded dynamically)
+- **Spreadsheets**: xlsx@0.18.5 (CDN, loaded dynamically)
 
-## Where things live
+## Where Things Live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+```
+artifacts/ilovepdf/
+├── index.html                    ← Shell HTML with Tailwind CDN, global CSS vars, modals
+├── src/
+│   ├── core/
+│   │   ├── App.js                ← App init, cookie consent, terms modal, scroll-to-top
+│   │   └── Router.js             ← Hash-based router; lazy-loads all 36 tools + 7 legal pages
+│   ├── components/
+│   │   ├── Header.js             ← Sticky header with logo, search, donate button
+│   │   └── Footer.js             ← 4-column footer with all links
+│   ├── pages/
+│   │   ├── HomePage.js           ← Hero + 36-tool grid + stats
+│   │   ├── AboutPage.js
+│   │   ├── PrivacyPage.js
+│   │   ├── TermsPage.js
+│   │   ├── DisclaimerPage.js
+│   │   ├── CookiePage.js
+│   │   ├── ContactPage.js
+│   │   └── DonatePage.js
+│   ├── tools/                    ← 36 tool files (one per tool)
+│   ├── seo/SEO.js                ← Per-route meta tag + JSON-LD injection
+│   ├── brand/OutputFilenameManager.js
+│   └── utils/helpers.js          ← loadScript, generateFilename, trustBar, setupDropZone, etc.
+```
 
-## Architecture decisions
+## Architecture Decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- **Zero server uploads**: All CDN libraries are loaded dynamically via `loadScript()` only when needed. Files never leave the browser.
+- **Hash-based routing**: `#merge-pdf`, `#split-pdf`, etc. Tool modules lazy-loaded on navigation.
+- **Filename convention**: Output files named `originalname-ilovepdf.ext` (branding in filename).
+- **Tailwind via CDN**: No build step needed for CSS. `tailwind.config` set inline in HTML for custom colors.
+- **CDN library versions**: pdfjs-dist@3.11.174 (NOT 4.x — uses different module format); pdf-lib@1.17.1 exposes `window.PDFLib`.
 
-## Product
+## Tools (36)
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+PDF: merge, split, compress, rotate, crop, organize, edit, watermark, sign, add-page-numbers, redact, protect, unlock, repair, ocr, compare, scan, ai-summarize, translate
+Convert: pdf-to-word, pdf-to-excel, pdf-to-jpg, word-to-pdf, jpg-to-pdf, html-to-pdf, pdf-to-ppt, excel-to-pdf, ppt-to-pdf
+Image: background-remover, crop-image, resize-image, image-filters, compress-image
+Utility: number-to-words, currency-converter, workflow-builder
 
-## User preferences
+## User Preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- All processing is browser-side; never add server upload logic
+- CDN library versions must be pinned (see stack above)
+- Tool output filenames always end in `-ilovepdf.ext`
+- pdfjs-dist@3.11.174 sets `GlobalWorkerOptions.workerSrc = ''`
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- DO NOT upgrade pdfjs-dist to 4.x — it uses `.mjs` modules and breaks dynamic script loading
+- `window.PDFLib` (not `PDFLib`) when using pdf-lib from CDN UMD build
+- `window['pdfjs-dist/build/pdf']` is the global key for pdfjs-dist@3.x CDN build
+- Vite only serves files; all logic is vanilla ES modules — do not add React plugins
+- Each tool class must export a named class with `render()` and `setupEvents()` methods
+- Router uses `Object.values(mod)[0]` to get the class from any tool module
