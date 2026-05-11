@@ -2,7 +2,7 @@ import { loadScript, generateFilename, downloadBlob, setBtn, showErr, clearErr, 
 const PDFLIB = 'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js';
 
 export class RedactPdfTool {
-  constructor() { this.file = null; this.redactions = []; }
+  constructor() { this.file = null; this.redactions = []; this.pageCount = 1; }
 
   render() {
     return `
@@ -15,8 +15,8 @@ export class RedactPdfTool {
       <input id="redact-input" type="file" accept=".pdf,application/pdf" style="display:none;" />
     </div>
     <div id="redact-options" style="display:none;margin-bottom:1.5rem;">
-      <p id="redact-info" style="font-weight:600;color:#1A1530;margin-bottom:1rem;"></p>
-      <p style="color:#6B7280;font-size:.9rem;margin-bottom:1rem;">Specify areas to redact using PDF point coordinates (origin is bottom-left).</p>
+      <p id="redact-info" style="font-weight:600;color:#1A1530;margin-bottom:.75rem;"></p>
+      <p style="color:#6B7280;font-size:.875rem;margin-bottom:1rem;">Specify areas to redact using PDF point coordinates (origin is bottom-left of page).</p>
       <div id="redact-list" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:1rem;"></div>
       <button id="add-redact" style="background:#F3F4F6;border:1px solid #E5E7EB;border-radius:8px;padding:.5rem 1rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;min-height:44px;">+ Add Redaction</button>
     </div>
@@ -58,14 +58,18 @@ export class RedactPdfTool {
   renderList() {
     const el = document.getElementById('redact-list');
     el.innerHTML = this.redactions.map(r => `
-      <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr 1fr auto;gap:.5rem;align-items:center;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:.75rem;">
-        <span style="font-size:.8rem;color:#6B7280;font-weight:600;">Pg</span>
-        <input type="number" value="${r.page}" min="1" max="${this.pageCount}" onchange="window._redactUpdate(${r.id},'page',this.value)" style="font-size:.85rem;" />
-        <div><span style="font-size:.75rem;color:#9CA3AF;display:block;">X</span><input type="number" value="${r.x}" onchange="window._redactUpdate(${r.id},'x',this.value)" style="font-size:.85rem;" /></div>
-        <div><span style="font-size:.75rem;color:#9CA3AF;display:block;">Y</span><input type="number" value="${r.y}" onchange="window._redactUpdate(${r.id},'y',this.value)" style="font-size:.85rem;" /></div>
-        <div><span style="font-size:.75rem;color:#9CA3AF;display:block;">W</span><input type="number" value="${r.w}" onchange="window._redactUpdate(${r.id},'w',this.value)" style="font-size:.85rem;" /></div>
-        <div><span style="font-size:.75rem;color:#9CA3AF;display:block;">H</span><input type="number" value="${r.h}" onchange="window._redactUpdate(${r.id},'h',this.value)" style="font-size:.85rem;" /></div>
-        <button onclick="window._redactRemove(${r.id})" style="background:none;border:none;cursor:pointer;color:#EF4444;min-width:32px;min-height:32px;font-size:1rem;">✕</button>
+      <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:.75rem;margin-bottom:.25rem;">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">
+          <span style="font-size:.8rem;color:#6B7280;font-weight:600;flex-shrink:0;">Page</span>
+          <input type="number" value="${r.page}" min="1" max="${this.pageCount}" onchange="window._redactUpdate(${r.id},'page',this.value)" style="width:70px;font-size:.85rem;" />
+          <button onclick="window._redactRemove(${r.id})" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#EF4444;min-width:32px;min-height:32px;font-size:1rem;">✕</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          <div><span style="font-size:.75rem;color:#9CA3AF;display:block;">X (pts)</span><input type="number" value="${r.x}" onchange="window._redactUpdate(${r.id},'x',this.value)" style="font-size:.85rem;" /></div>
+          <div><span style="font-size:.75rem;color:#9CA3AF;display:block;">Y (pts)</span><input type="number" value="${r.y}" onchange="window._redactUpdate(${r.id},'y',this.value)" style="font-size:.85rem;" /></div>
+          <div><span style="font-size:.75rem;color:#9CA3AF;display:block;">Width (pts)</span><input type="number" value="${r.w}" onchange="window._redactUpdate(${r.id},'w',this.value)" style="font-size:.85rem;" /></div>
+          <div><span style="font-size:.75rem;color:#9CA3AF;display:block;">Height (pts)</span><input type="number" value="${r.h}" onchange="window._redactUpdate(${r.id},'h',this.value)" style="font-size:.85rem;" /></div>
+        </div>
       </div>`).join('');
     window._redactUpdate = (id, key, val) => { const r = this.redactions.find(r=>r.id===id); if(r) r[key]=Number(val); };
     window._redactRemove = (id) => { this.redactions = this.redactions.filter(r=>r.id!==id); this.renderList(); };

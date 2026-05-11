@@ -14,7 +14,7 @@ export class ScanPdfTool {
         <video id="scan-video" style="display:none;width:100%;max-width:500px;border-radius:12px;background:#000;" autoplay playsinline></video>
         <canvas id="scan-canvas" style="display:none;"></canvas>
       </div>
-      <div id="scan-controls" style="display:none;gap:.75rem;display:none;">
+      <div id="scan-controls" style="display:none;gap:.75rem;">
         <button id="scan-capture" class="btn-primary">📸 Capture</button>
         <button id="scan-stop" style="background:#F3F4F6;border:1px solid #E5E7EB;border-radius:10px;height:56px;padding:0 1.5rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;min-height:44px;">Stop Camera</button>
       </div>
@@ -39,7 +39,9 @@ export class ScanPdfTool {
       const video = document.getElementById('scan-video');
       video.srcObject = this.stream;
       video.style.display = 'block';
-      document.getElementById('scan-controls').style.display = 'flex';
+      const controls = document.getElementById('scan-controls');
+      controls.style.display = 'flex';
+      controls.style.gap = '.75rem';
       document.getElementById('scan-start').style.display = 'none';
     } catch(e) { showErr('scan-error','Camera access denied: ' + e.message); }
   }
@@ -57,7 +59,7 @@ export class ScanPdfTool {
     const div = document.createElement('div');
     div.style.cssText = 'position:relative;display:inline-block;';
     div.innerHTML = `<img src="${dataUrl}" style="width:120px;height:90px;object-fit:cover;border-radius:8px;border:2px solid #E5E7EB;" />
-      <button onclick="window._scanRemove(${idx})" style="position:absolute;top:-6px;right:-6px;background:#EF4444;color:white;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:.7rem;">✕</button>`;
+      <button onclick="window._scanRemove(${idx})" style="position:absolute;top:-6px;right:-6px;background:#EF4444;color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:.7rem;line-height:1;display:flex;align-items:center;justify-content:center;">✕</button>`;
     previews.appendChild(div);
     document.getElementById('scan-save').style.display = 'inline-flex';
     window._scanRemove = (i) => { this.captures[i]=null; div.remove(); };

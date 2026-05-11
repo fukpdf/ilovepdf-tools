@@ -1,11 +1,11 @@
 import { generateFilename, downloadBlob, setBtn, showErr, clearErr, showResult, setupDropZone, trustBar, toolHeader } from '../utils/helpers.js';
 
 export class CropImageTool {
-  constructor() { this.file = null; this.img = null; this.crop = {x:0,y:0,w:0,h:0}; this.dragging=false; }
+  constructor() { this.file = null; this.img = null; }
 
   render() {
     return `
-    ${toolHeader('✂️','Crop Image','Crop images by specifying pixel dimensions or drawing a selection.')}
+    ${toolHeader('✂️','Crop Image','Crop images by specifying pixel coordinates and dimensions.')}
     ${trustBar()}
     <div id="crop-img-zone" class="upload-zone" style="margin-bottom:1.5rem;">
       <div style="font-size:2.5rem;margin-bottom:.75rem;">🖼️</div>
@@ -15,15 +15,15 @@ export class CropImageTool {
     </div>
     <div id="crop-img-options" style="display:none;margin-bottom:1.5rem;">
       <p id="crop-img-info" style="font-weight:600;color:#1A1530;margin-bottom:1rem;"></p>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.75rem;max-width:480px;margin-bottom:1rem;">
-        <div><label style="font-size:.85rem;color:#6B7280;display:block;margin-bottom:.25rem;">X</label><input id="ci-x" type="number" min="0" value="0" /></div>
-        <div><label style="font-size:.85rem;color:#6B7280;display:block;margin-bottom:.25rem;">Y</label><input id="ci-y" type="number" min="0" value="0" /></div>
-        <div><label style="font-size:.85rem;color:#6B7280;display:block;margin-bottom:.25rem;">Width</label><input id="ci-w" type="number" min="1" value="500" /></div>
-        <div><label style="font-size:.85rem;color:#6B7280;display:block;margin-bottom:.25rem;">Height</label><input id="ci-h" type="number" min="1" value="500" /></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;max-width:380px;margin-bottom:1rem;">
+        <div><label style="font-size:.85rem;color:#6B7280;display:block;margin-bottom:.25rem;">X (left offset)</label><input id="ci-x" type="number" min="0" value="0" /></div>
+        <div><label style="font-size:.85rem;color:#6B7280;display:block;margin-bottom:.25rem;">Y (top offset)</label><input id="ci-y" type="number" min="0" value="0" /></div>
+        <div><label style="font-size:.85rem;color:#6B7280;display:block;margin-bottom:.25rem;">Width (px)</label><input id="ci-w" type="number" min="1" value="500" /></div>
+        <div><label style="font-size:.85rem;color:#6B7280;display:block;margin-bottom:.25rem;">Height (px)</label><input id="ci-h" type="number" min="1" value="500" /></div>
       </div>
-      <div style="margin-bottom:.75rem;">
+      <div style="margin-bottom:.75rem;max-width:180px;">
         <label style="font-weight:600;font-size:.9rem;color:#1A1530;display:block;margin-bottom:.4rem;">Output Format</label>
-        <select id="ci-format" style="max-width:160px;"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WEBP</option></select>
+        <select id="ci-format"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WEBP</option></select>
       </div>
     </div>
     <button id="crop-img-btn" class="btn-primary" data-label="✂️ Crop Image" style="display:none;">✂️ Crop Image</button>
@@ -51,19 +51,19 @@ export class CropImageTool {
       document.getElementById('crop-img-options').style.display = 'block';
       const btn = document.getElementById('crop-img-btn');
       btn.style.display = 'inline-flex';
-      btn.onclick = () => this.crop();
+      btn.onclick = () => this.doCrop();
     };
     img.src = URL.createObjectURL(f);
   }
 
-  crop() {
+  doCrop() {
     if (!this.img) return;
     const x = parseInt(document.getElementById('ci-x').value)||0;
     const y = parseInt(document.getElementById('ci-y').value)||0;
     const w = Math.max(1, parseInt(document.getElementById('ci-w').value)||100);
     const h = Math.max(1, parseInt(document.getElementById('ci-h').value)||100);
     const format = document.getElementById('ci-format').value;
-    const ext = format.split('/')[1];
+    const ext = format === 'image/jpeg' ? 'jpg' : format === 'image/webp' ? 'webp' : 'png';
     setBtn('crop-img-btn', true); clearErr('crop-img-error');
     try {
       const canvas = document.createElement('canvas');

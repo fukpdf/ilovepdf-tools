@@ -6,9 +6,9 @@ export class ComparePdfTool {
 
   render() {
     return `
-    ${toolHeader('🔁','Compare PDF','Extract text from two PDFs and show the differences side by side.')}
+    ${toolHeader('🔁','Compare PDF','Extract text from two PDFs and show differences side by side.')}
     ${trustBar()}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;" class="compare-grid">
       <div>
         <p style="font-weight:600;color:#1A1530;margin-bottom:.5rem;">📄 First PDF</p>
         <div id="cmp-zone1" class="upload-zone" style="padding:1.5rem 1rem;">
@@ -16,7 +16,7 @@ export class ComparePdfTool {
           <p style="font-size:.85rem;color:#6B7280;">Drop or click</p>
           <input id="cmp-input1" type="file" accept=".pdf,application/pdf" style="display:none;" />
         </div>
-        <p id="cmp-name1" style="font-size:.85rem;color:#7B3FF2;margin-top:.5rem;min-height:20px;"></p>
+        <p id="cmp-name1" style="font-size:.85rem;color:#7B3FF2;margin-top:.5rem;min-height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></p>
       </div>
       <div>
         <p style="font-weight:600;color:#1A1530;margin-bottom:.5rem;">📄 Second PDF</p>
@@ -25,12 +25,13 @@ export class ComparePdfTool {
           <p style="font-size:.85rem;color:#6B7280;">Drop or click</p>
           <input id="cmp-input2" type="file" accept=".pdf,application/pdf" style="display:none;" />
         </div>
-        <p id="cmp-name2" style="font-size:.85rem;color:#7B3FF2;margin-top:.5rem;min-height:20px;"></p>
+        <p id="cmp-name2" style="font-size:.85rem;color:#7B3FF2;margin-top:.5rem;min-height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></p>
       </div>
     </div>
+    <style>.compare-grid{grid-template-columns:1fr 1fr}@media(max-width:480px){.compare-grid{grid-template-columns:1fr}}</style>
     <button id="cmp-btn" class="btn-primary" data-label="🔁 Compare PDFs">🔁 Compare PDFs</button>
     <div id="cmp-error" class="error-box"></div>
-    <div id="cmp-result" class="result-box" style="max-height:500px;overflow-y:auto;"></div>`;
+    <div id="cmp-result" class="result-box" style="max-height:500px;overflow-y:auto;overflow-x:auto;"></div>`;
   }
 
   setupEvents() {
@@ -86,9 +87,9 @@ export class ComparePdfTool {
         const match = l1.trim() === l2.trim();
         if (match) same++; else diff++;
         rows.push(`<tr style="background:${match?'white':'#FEF2F2'}">
-          <td style="padding:.5rem .75rem;border:1px solid #E5E7EB;font-size:.8rem;vertical-align:top;max-width:300px;word-break:break-word;">${l1||'<em style="color:#9CA3AF">(empty)</em>'}</td>
-          <td style="padding:.5rem;text-align:center;border:1px solid #E5E7EB;font-size:.9rem;">${match?'✓':'≠'}</td>
-          <td style="padding:.5rem .75rem;border:1px solid #E5E7EB;font-size:.8rem;vertical-align:top;max-width:300px;word-break:break-word;">${l2||'<em style="color:#9CA3AF">(empty)</em>'}</td>
+          <td style="padding:.5rem .75rem;border:1px solid #E5E7EB;font-size:.8rem;vertical-align:top;max-width:240px;word-break:break-word;">${l1||'<em style="color:#9CA3AF">(empty)</em>'}</td>
+          <td style="padding:.5rem;text-align:center;border:1px solid #E5E7EB;font-size:.9rem;white-space:nowrap;">${match?'✓':'≠'}</td>
+          <td style="padding:.5rem .75rem;border:1px solid #E5E7EB;font-size:.8rem;vertical-align:top;max-width:240px;word-break:break-word;">${l2||'<em style="color:#9CA3AF">(empty)</em>'}</td>
         </tr>`);
       }
       showResult('cmp-result',`
@@ -96,14 +97,16 @@ export class ComparePdfTool {
           <div style="background:#DCFCE7;border-radius:8px;padding:.5rem 1rem;font-size:.85rem;font-weight:600;color:#166534;">✓ ${same} matching lines</div>
           <div style="background:#FEE2E2;border-radius:8px;padding:.5rem 1rem;font-size:.85rem;font-weight:600;color:#991B1B;">≠ ${diff} different lines</div>
         </div>
-        <table style="width:100%;border-collapse:collapse;">
+        <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;min-width:480px;">
           <thead><tr>
-            <th style="padding:.5rem .75rem;background:#F9FAFB;border:1px solid #E5E7EB;text-align:left;font-size:.8rem;">${this.file1.name}</th>
-            <th style="padding:.5rem;background:#F9FAFB;border:1px solid #E5E7EB;width:40px;"></th>
-            <th style="padding:.5rem .75rem;background:#F9FAFB;border:1px solid #E5E7EB;text-align:left;font-size:.8rem;">${this.file2.name}</th>
+            <th style="padding:.5rem .75rem;background:#F9FAFB;border:1px solid #E5E7EB;text-align:left;font-size:.8rem;max-width:240px;word-break:break-all;">${this.file1.name}</th>
+            <th style="padding:.5rem;background:#F9FAFB;border:1px solid #E5E7EB;width:36px;"></th>
+            <th style="padding:.5rem .75rem;background:#F9FAFB;border:1px solid #E5E7EB;text-align:left;font-size:.8rem;max-width:240px;word-break:break-all;">${this.file2.name}</th>
           </tr></thead>
           <tbody>${rows.join('')}</tbody>
-        </table>`);
+        </table>
+        </div>`);
     } catch(e) { showErr('cmp-error','Comparison failed: ' + e.message); }
     finally { setBtn('cmp-btn', false, '🔁 Compare PDFs'); }
   }
