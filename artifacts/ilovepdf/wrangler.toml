@@ -1,0 +1,21 @@
+# Cloudflare Pages — Project Configuration
+#
+# This file explicitly declares artifacts/ilovepdf as a Cloudflare Pages
+# static site project. It resolves the wrangler workspace detection error
+# that occurs when deploying from a pnpm monorepo:
+#
+#   "Wrangler application detection logic has been run in the root of a
+#    workspace instead of targeting a specific project."
+#
+# With this file present, wrangler knows exactly what to deploy and does
+# not need to auto-detect the project type from the workspace structure.
+#
+# Cloudflare Pages dashboard settings:
+#   Root directory:    artifacts/ilovepdf
+#   Build command:     bash build-cloudflare.sh
+#   Output directory:  dist
+#   Framework preset:  None
+
+name = "ilovepdf"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-05-12"

@@ -47,3 +47,7 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Cloudflare build artifacts — never commit npm lockfiles generated inside workspace packages
+artifacts/*/package-lock.json
+artifacts/*/npm-debug.log
