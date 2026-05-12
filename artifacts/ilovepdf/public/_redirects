@@ -1,0 +1,4 @@
+# Cloudflare Pages — SPA Redirect Rules
+# Hash routing (#merge-pdf etc.) is handled client-side — no server redirects needed.
+# This catch-all ensures direct URL access always serves index.html.
+/*  /index.html  200

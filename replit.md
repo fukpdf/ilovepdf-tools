@@ -67,6 +67,42 @@ Utility: number-to-words, currency-converter, workflow-builder
 - Tool output filenames always end in `-ilovepdf.ext`
 - pdfjs-dist@3.11.174 sets `GlobalWorkerOptions.workerSrc = ''`
 
+## Cloudflare Pages Deployment
+
+The pnpm workspace uses Replit-specific overrides (linux-x64 platform exclusions) that cause `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH` on Cloudflare. The fix is a standalone npm-based build path that completely bypasses the pnpm workspace.
+
+### Cloudflare Pages settings
+
+| Setting | Value |
+|---|---|
+| Root directory | `artifacts/ilovepdf` |
+| Build command | `bash build-cloudflare.sh` |
+| Build output directory | `dist` |
+| Framework preset | None |
+
+### How it works
+
+- `build-cloudflare.sh` temporarily swaps `package.json` with `package.cloudflare.json` (just vite@5, no workspace refs)
+- Runs `npm install` — bypasses pnpm entirely, no lockfile mismatch possible
+- Runs `vite build --config vite.config.cloudflare.js` — no PORT/BASE_PATH required
+- Output goes to `artifacts/ilovepdf/dist/` — Cloudflare serves this directly
+- `public/_headers` and `public/_redirects` are copied to `dist/` automatically by Vite
+
+### Files involved
+
+- `vite.config.cloudflare.js` — build config without PORT/BASE_PATH requirements, base='/'
+- `package.cloudflare.json` — standalone npm package with only vite@5.4.19
+- `build-cloudflare.sh` — build script that swaps package.json and runs npm install + vite build
+- `public/_headers` — Cloudflare caching + security headers
+- `public/_redirects` — SPA catch-all (`/* → /index.html 200`)
+
+## PWA / Offline Support
+
+- `public/sw.js` — Service worker with app-shell offline cache
+- `public/manifest.json` — Web app manifest (installable, shortcuts to 4 tools)
+- `index.html` — Registers SW on load; auto-updates when new SW is available
+- Strategy: Navigate = network-first + cache fallback; JS/CSS/assets = cache-first; CDN = network-only (always fresh)
+
 ## Gotchas
 
 - DO NOT upgrade pdfjs-dist to 4.x — it uses `.mjs` modules and breaks dynamic script loading
@@ -75,3 +111,4 @@ Utility: number-to-words, currency-converter, workflow-builder
 - Vite only serves files; all logic is vanilla ES modules — do not add React plugins
 - Each tool class must export a named class with `render()` and `setupEvents()` methods
 - Router uses `Object.values(mod)[0]` to get the class from any tool module
+- Do NOT run `bash build-cloudflare.sh` locally in the ilovepdf dir without restoring package.json — the script auto-restores it but if interrupted, run: `cp package.json.workspace.bak package.json`
