@@ -1,12 +1,14 @@
 import { Header } from '../components/Header.js';
 import { Footer } from '../components/Footer.js';
 import { Router } from './Router.js';
+import { InstallBanner } from '../components/InstallBanner.js';
 
 class App {
   constructor() {
     this.header = new Header();
     this.footer = new Footer();
     this.router = new Router();
+    this.installBanner = new InstallBanner();
   }
 
   render() {
@@ -28,6 +30,7 @@ class App {
     this.setupCookieConsent();
     this.setupTermsModal();
     this.setupScrollToTop();
+    this.installBanner.init();
   }
 
   removeLodingScreen() {

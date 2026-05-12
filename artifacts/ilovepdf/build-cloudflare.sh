@@ -7,34 +7,37 @@ echo "  ILovePDF — Cloudflare Pages Build Script  "
 echo "============================================="
 echo ""
 
-# Step 1: Swap to standalone package.json (bypasses pnpm workspace + catalog: refs)
-echo "→ Using standalone npm package.json..."
-if [ -f package.json ]; then
-  cp package.json package.json.workspace.bak
+# ─── Verify we are in the right directory ─────────────────────────────────────
+if [ ! -f "vite.config.cloudflare.js" ]; then
+  echo "ERROR: Run this script from artifacts/ilovepdf/ (vite.config.cloudflare.js not found)"
+  exit 1
 fi
-cp package.cloudflare.json package.json
 
-# Step 2: Clean any stale lock files from workspace that would confuse npm
-rm -f pnpm-lock.yaml yarn.lock
+# ─── Locate vite ──────────────────────────────────────────────────────────────
+# After pnpm workspace install, vite lives in node_modules/.bin/vite
+# No package.json swap or separate npm install needed.
+if [ -f "node_modules/.bin/vite" ]; then
+  VITE="node_modules/.bin/vite"
+elif [ -f "../../node_modules/.bin/vite" ]; then
+  VITE="../../node_modules/.bin/vite"
+else
+  echo "→ vite not found in workspace node_modules, downloading vite@5 via npx..."
+  VITE="npx --yes vite@5.4.19"
+fi
 
-# Step 3: Install only vite (everything else loads from CDN at runtime)
-echo "→ Installing build dependencies via npm..."
-npm install
-
-# Step 4: Build static site (base=/, no PORT/BASE_PATH needed)
+echo "→ vite binary: $VITE"
 echo "→ Building static site..."
-npm run build
 
-# Step 5: Restore original workspace package.json
-echo "→ Restoring workspace package.json..."
-if [ -f package.json.workspace.bak ]; then
-  mv package.json.workspace.bak package.json
-fi
+# ─── Build ────────────────────────────────────────────────────────────────────
+# vite.config.cloudflare.js uses base='/' and needs no PORT or BASE_PATH.
+$VITE build --config vite.config.cloudflare.js
 
 echo ""
 echo "✅ Build complete! Output: ./dist"
-echo "   Configure Cloudflare Pages:"
+echo ""
+echo "   Cloudflare Pages settings:"
 echo "   → Root directory:     artifacts/ilovepdf"
 echo "   → Build command:      bash build-cloudflare.sh"
 echo "   → Output directory:   dist"
+echo "   → Framework preset:   None"
 echo ""
